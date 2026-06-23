@@ -1,0 +1,52 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/localhost/6333' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ingest:
+    build: .
+    container_name: rag-ingest
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    volumes:
+      - ./data/raw:/app/data/raw:ro
+      - hf_cache:/app/.cache/huggingface
+    command: ["python", "-m", "scripts.ingest"]
+    restart: "no"
+
+  api:
+    build: .
+    container_name: rag-api
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      ingest:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - LOG_LEVEL=INFO
+    volumes:
+      - hf_cache:/app/.cache/huggingface
+
+volumes:
+  qdrant_data:
+  hf_cache:

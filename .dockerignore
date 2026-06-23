@@ -1,0 +1,20 @@
+cat > .dockerignore << 'EOF'
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+.env
+.env.local
+.python-version
+data/raw
+data/processed
+.pytest_cache
+.ruff_cache
+README.md
+docker-compose*.yml
+Dockerfile
+*.md
+.vscode
+.idea
+EOF
