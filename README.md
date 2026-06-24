@@ -46,7 +46,9 @@ grounded LLM answer with source citations.
       with tests.
 - [x] **M3** — Doctor prompt ("minimal fix, only from context") + JSON output validation
       (broken config blocks are never shown), with tests.
-- [ ] **M4** — Telegram front-end, rate-limiting, 👍/👎 feedback; swap LLM to Claude Haiku.
+- [x] **M4** — Telegram front-end (`python -m src.bot.telegram_bot`): auto-scrub →
+      FAQ router → rate-limited RAG, 👍/👎 feedback log, `@ExtenVPNBot` footer.
+      LLM provider is swappable (`LLM_PROVIDER=groq` free by default, `claude` optional).
 - [ ] **M5** — Eval set (real log → correct fix pairs) + launch (Habr, net4people, r/selfhosted).
 
 ## 🚀 Quick start (M1 — ask the handbook over HTTP)
@@ -79,6 +81,21 @@ curl -N -X POST http://localhost:8000/ask/stream \
   -H "Content-Type: application/json" \
   -d '{"question": "My Xray client connects but there is no internet. What do I check?"}'
 ```
+
+## 🤖 Run the Telegram bot (free)
+
+Everything runs at **zero cost** by default: local embeddings, self-hosted Qdrant,
+and Groq's free LLM tier. Claude Haiku is an optional quality upgrade, off by default.
+
+```bash
+# In .env: TELEGRAM_BOT_TOKEN=<from @BotFather>, GROQ_API_KEY=<from console.groq.com>
+# (LLM_PROVIDER defaults to groq — free)
+uv run python -m src.bot.telegram_bot
+```
+
+The bot scrubs secrets from every message, answers common errors from the FAQ router
+(zero tokens), falls back to RAG for the hard ones (rate-limited per chat/day), and
+logs 👍/👎 to `data/feedback.jsonl` to build an eval set.
 
 ## ⚠️ Privacy
 

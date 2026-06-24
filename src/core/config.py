@@ -15,9 +15,15 @@ class Settings(BaseSettings):
     app_name: str = "Reality Doctor"
     log_level: str = "INFO"
 
-    # LLM (Groq for now; swappable to Claude Haiku at M4)
-    groq_api_key: str
+    # LLM provider — "groq" (free tier, to start) or "claude" (Haiku, quality)
+    llm_provider: str = "groq"
+    llm_max_tokens: int = 1024
+    # Groq
+    groq_api_key: str = ""
     groq_model: str = "llama-3.1-8b-instant"
+    # Anthropic / Claude
+    anthropic_api_key: str = ""
+    claude_model: str = "claude-haiku-4-5"
 
     # Qdrant
     qdrant_host: str = "localhost"
@@ -27,6 +33,14 @@ class Settings(BaseSettings):
     # Retrieval
     top_k: int = 5
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+
+    # Telegram bot
+    telegram_bot_token: str = ""
+    rate_limit_per_day: int = 5  # LLM calls per chat_id per day (FAQ answers are free)
+    feedback_log: str = "data/feedback.jsonl"
+    bot_footer: str = (
+        "\n\n— не помогло или лень возиться? готовый сервис: @ExtenVPNBot"
+    )
 
 
 settings = Settings()
