@@ -42,7 +42,8 @@ grounded LLM answer with source citations.
 
 - [x] **M1** — Knowledge base = the Anti-Censorship Handbook (re-indexed), `/ask` answers
       circumvention questions.
-- [ ] **M2** — Safety layer: auto-scrub of secrets + deterministic FAQ router (before the LLM).
+- [x] **M2** — Safety layer: auto-scrub of secrets + deterministic FAQ router (before the LLM),
+      with tests.
 - [ ] **M3** — Doctor prompt ("minimal fix, only from context") + JSON-schema output validation.
 - [ ] **M4** — Telegram front-end, rate-limiting, 👍/👎 feedback; swap LLM to Claude Haiku.
 - [ ] **M5** — Eval set (real log → correct fix pairs) + launch (Habr, net4people, r/selfhosted).
@@ -80,9 +81,13 @@ curl -N -X POST http://localhost:8000/ask/stream \
 
 ## ⚠️ Privacy
 
-Reality Doctor is being built to **strip secrets from your input before anything is logged or
-sent to a model** (M2). Until that lands, **do not paste real `vless://` links, private keys,
-UUIDs or IPs.** Use placeholders.
+Every incoming message is run through `src/safety/scrub.py` **before it is logged or sent to a
+model**: share links (`vless://`, `vmess://`, `ss://`, `trojan://`, `tuic://`, `hysteria2://`)
+have their credentials, server address and remark stripped; standalone UUIDs and
+`privateKey`/`password`/`shortId` values are redacted. The bot keeps only the diagnostic
+structure (protocol, transport, `sni`, `flow`, port) and tells you what it removed.
+
+It's conservative, not a guarantee — still prefer placeholders over real secrets.
 
 ## 📄 License
 
