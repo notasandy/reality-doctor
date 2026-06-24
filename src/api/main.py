@@ -89,6 +89,7 @@ async def ask(req: AskRequest) -> dict:
             for s in result.sources
         ],
         "route": None,
+        "valid": result.valid,
         "redacted": clean.redacted,
         "notice": clean.notice(),
     }

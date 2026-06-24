@@ -44,7 +44,8 @@ grounded LLM answer with source citations.
       circumvention questions.
 - [x] **M2** — Safety layer: auto-scrub of secrets + deterministic FAQ router (before the LLM),
       with tests.
-- [ ] **M3** — Doctor prompt ("minimal fix, only from context") + JSON-schema output validation.
+- [x] **M3** — Doctor prompt ("minimal fix, only from context") + JSON output validation
+      (broken config blocks are never shown), with tests.
 - [ ] **M4** — Telegram front-end, rate-limiting, 👍/👎 feedback; swap LLM to Claude Haiku.
 - [ ] **M5** — Eval set (real log → correct fix pairs) + launch (Habr, net4people, r/selfhosted).
 
