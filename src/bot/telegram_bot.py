@@ -103,7 +103,21 @@ async def handle_vote(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
 
 def build_application() -> Application:
-    app = Application.builder().token(settings.telegram_bot_token).build()
+    builder = (
+        Application.builder()
+        .token(settings.telegram_bot_token)
+        # Generous timeouts — reaching api.telegram.org can be slow on some networks.
+        .connect_timeout(30)
+        .read_timeout(30)
+        .write_timeout(30)
+        .pool_timeout(30)
+    )
+    # Optional proxy to reach Telegram where it's blocked/throttled.
+    if settings.telegram_proxy:
+        builder = builder.proxy(settings.telegram_proxy).get_updates_proxy(settings.telegram_proxy)
+        logger.info("Using Telegram proxy: %s", settings.telegram_proxy)
+
+    app = builder.build()
     app.bot_data["doctor"] = Doctor()
     app.bot_data["limiter"] = DailyRateLimiter(settings.rate_limit_per_day)
     app.bot_data["feedback"] = FeedbackStore(settings.feedback_log)

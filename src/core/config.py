@@ -36,6 +36,7 @@ class Settings(BaseSettings):
 
     # Telegram bot
     telegram_bot_token: str = ""
+    telegram_proxy: str = ""  # optional: http(s)://host:port or socks5://host:port to reach api.telegram.org
     rate_limit_per_day: int = 5  # LLM calls per chat_id per day (FAQ answers are free)
     feedback_log: str = "data/feedback.jsonl"
     bot_footer: str = (
